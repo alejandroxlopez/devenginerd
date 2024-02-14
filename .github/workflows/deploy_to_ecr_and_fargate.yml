@@ -1,5 +1,5 @@
 # Deploy the application to Amazon ECR and Fargate Github Actions workflow file
-name: API Build and Deploy
+name: Site Build and Deploy
 
 on:
   push:
