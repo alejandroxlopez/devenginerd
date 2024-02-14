@@ -1,0 +1,43 @@
+# Deploy the application to Amazon ECR and Fargate Github Actions workflow file
+name: API Build and Deploy
+
+on:
+  push:
+    paths: 
+      - '**/**/*'
+      - '.github/workflows/api_**.yml'
+    branches:
+      - production
+
+jobs:
+  build:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps: 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - uses: actions/checkout@v1
+    - name: Build the Docker image using docker-compose
+      env: 
+        ENVIRONMENT: production # this is not really used, just for reference.
+      run: |
+        docker build -t devenginerd .
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    - name: Docker Push to ECR production
+      env: 
+        REPOSITORY_URL: 456270619352.dkr.ecr.us-east-1.amazonaws.com/devenginerd
+      run: | 
+        docker tag devenginerd:latest $REPOSITORY_URL:latest
+        docker push $REPOSITORY_URL:latest
+    - name: Deploy to Fargate
+      env:
+        REPOSITORY_URL: 456270619352.dkr.ecr.us-east-1.amazonaws.com/devenginerd
+      run: | 
+        aws ecs update-service --cluster devenginerd-Cluster --service devenginerd-Service --force-new-deployment --region us-east-1
+        aws ecs wait services-stable --cluster devenginerd-Cluster --service devenginerd-Service --region us-east-1
