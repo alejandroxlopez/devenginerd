@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  wordpress:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: host.docker.internal:3306
+      WORDPRESS_DB_USER: roott
+      WORDPRESS_DB_PASSWORD: root
+      WORDPRESS_DB_NAME: devenginerd
+    volumes:
+      - .:/var/www/html

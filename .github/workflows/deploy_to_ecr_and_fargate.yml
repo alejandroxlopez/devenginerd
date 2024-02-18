@@ -39,5 +39,5 @@ jobs:
       env:
         REPOSITORY_URL: 456270619352.dkr.ecr.us-east-1.amazonaws.com/devenginerd
       run: | 
-        aws ecs update-service --cluster devenginerd-Cluster --service devenginerd-Service --force-new-deployment --region us-east-1
-        aws ecs wait services-stable --cluster devenginerd-Cluster --service devenginerd-Service --region us-east-1
+        aws ecs update-service --cluster devenginerdCluster --service devenginerdService --force-new-deployment --region us-east-1
+        aws ecs wait services-stable --cluster devenginerdCluster --service devenginerdService --region us-east-1
